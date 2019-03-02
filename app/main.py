@@ -6,8 +6,9 @@ import bottle
 from api import ping_response, start_response, move_response, end_response
 from AStar import neighbours, a_star
 
+
 def init(data):
-#{  #"turn": 1,
+    #{  #"turn": 1,
     #"game": {  #"id": "d6e8f7e3-f95d-4d43-88bc-18768eb2960c"},
     #"board": { #"food": #[{"y": 6, "x": 8}, {"y": 2, "x": 9}, {"y": 1, "x": 5}, {"y": 7, "x": 1}, {"y": 7, "x": 6}, {"y": 3, "x": 4}, {"y": 6, "x": 10}, {"y": 10, "x": 4}, {"y": 12, "x": 2}, {"y": 13, "x": 8}],
                 #"width": 15,
@@ -21,9 +22,10 @@ def init(data):
                 #"id": "7ecaaa6f-9c4a-4c90-9b44-fdd8423cf203",
                 #"name": "Test1"}}
 
-    grid = [[0 for col in xrange(data['game']["height"])] for row in xrange(data['width'])]
+    grid = [[0 for col in xrange(data['board']["height"])]
+            for row in xrange(data["board"]['width'])]
     for snek in data['snakes']:
-        if snek['id']== data['you']:
+        if snek['id'] == data['you']:
             mysnake = snek
         for coord in snek['coords']:
             grid[coord[0]][coord[1]] = SNAKE
@@ -41,6 +43,7 @@ def index():
        <a href="https://docs.battlesnake.io">https://docs.battlesnake.io</a>.
     '''
 
+
 @bottle.route('/static/<path:path>')
 def static(path):
     """
@@ -51,6 +54,7 @@ def static(path):
     """
     return bottle.static_file(path, root='static/')
 
+
 @bottle.post('/ping')
 def ping():
     """
@@ -58,6 +62,7 @@ def ping():
     such as Heroku, from sleeping the application instance.
     """
     return ping_response()
+
 
 @bottle.post('/start')
 def start():
@@ -89,13 +94,12 @@ def move():
 
     our_snake, grid = init(data)
 
-
     our_snake = data["you"]["body"]
     snake_head = [our_snake[0]["x"], our_snake[0]["y"]]
 
     print(snake_head)
     path = a_star(snake_head, food, grid, snek_coords)
-    direction = directions[data["turn"]%4]
+    direction = directions[data["turn"] % 4]
 
     #direction = random.choice(directions)
 
