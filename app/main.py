@@ -13,6 +13,7 @@ WALL = 2
 FOOD = 3
 SAFTEY = 5
 
+
 def init(data):
     #{  #"turn": 1,
     #"game": {  #"id": "d6e8f7e3-f95d-4d43-88bc-18768eb2960c"},
@@ -34,7 +35,7 @@ def init(data):
     mysnake = []
     for coord in data["you"]["body"]:
         grid[coord["x"]][coord["y"]] = SNAKE
-        mysnake.append([coord["x"],coord["y"]])
+        mysnake.append([coord["x"], coord["y"]])
 
     for snake in data["board"]['snakes']:
         for coord in snake['body']:
@@ -103,13 +104,13 @@ def move():
     directions = ['up', 'left', 'down', 'right']
 
     our_snake, grid = init(data)
-
     snake_head = our_snake[0]
 
-    print(snake_head)
-    #path = a_star(snake_head, food, grid, snek_coords)
+    foods = sorted(data['food'], key=lambda p: distance(snek_head, p))
+    for food in foods:
+        path = a_star(snake_head, food, grid, our_snake)
     direction = directions[data["turn"] % 4]
-
+    path = None
     #direction = random.choice(directions)
 
     return move_response(direction)
