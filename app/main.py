@@ -9,7 +9,7 @@ from AStar import neighbours, a_star
 import copy
 
 
-NEK_BUFFER = 3
+SNEK_BUFFER = 3
 SNAKE = 1
 WALL = 2
 FOOD = 3
@@ -89,7 +89,8 @@ def init(data):
     for f in data['food']:
         grid[f[0]][f[1]] = FOOD
 
-    mysnake = data["mysnake"]
+    if(not mysnake):
+        mysnake = data["mysnake"]
     return mysnake, grid
 
 
@@ -113,12 +114,15 @@ def revert(data):
         for coord in snake["body"]:
             coords.append([coord["x"], coord["y"]])
         old_snake["coords"] = coords
+        snakes.append(old_snake)
     old_style["snakes"] = snakes
     old_style["mysnake"] = {}
     coords=[]
     for coord in data["you"]["body"]:
         coords.append([coord["x"], coord["y"]])
     old_style["mysnake"]["coords"] = coords
+    old_style["you"] = data["you"]["id"]
+    old_style["health_points"] = data["you"]["health"]
 
     return old_style
 
@@ -178,15 +182,6 @@ def move():
     print(json.dumps(data))
 
     data = revert(data)
-    #directions = ['up', 'left', 'down', 'right']
-    #direction = directions[data["turn"] % 4]
-    #direction = random.choice(directions)
-    #return move_response(direction)
-
-    #snake_head = our_snake[0]
-
-    #print(snake_head)
-    #path = a_star(snake_head, food, grid, our_snake)
 
     snek, grid = init(data)
     taunt = "I'm a sneeky snek!"
