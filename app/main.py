@@ -123,6 +123,8 @@ def revert(data):
     old_style["mysnake"]["coords"] = coords
     old_style["you"] = data["you"]["id"]
     old_style["health_points"] = data["you"]["health"]
+    old_style["mysnake"]["name"] = data["you"]["name"]
+    old_style["mysnake"]["id"] = data["you"]["id"]
 
     return old_style
 
