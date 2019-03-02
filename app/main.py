@@ -7,6 +7,12 @@ from api import ping_response, start_response, move_response, end_response
 from AStar import neighbours, a_star
 
 
+SNEK_BUFFER = 3
+SNAKE = 1
+WALL = 2
+FOOD = 3
+SAFTEY = 5
+
 def init(data):
     #{  #"turn": 1,
     #"game": {  #"id": "d6e8f7e3-f95d-4d43-88bc-18768eb2960c"},
@@ -24,16 +30,20 @@ def init(data):
 
     grid = [[0 for col in xrange(data['board']["height"])]
             for row in xrange(data["board"]['width'])]
-    for snek in data['snakes']:
-        if snek['id'] == data['you']:
-            mysnake = snek
-        for coord in snek['coords']:
-            grid[coord[0]][coord[1]] = SNAKE
 
-    for f in data['food']:
-        grid[f[0]][f[1]] = FOOD
+    mysnake = []
+    for coord in data["you"]["body"]:
+        grid[coord["x"]][coord["y"]] = SNAKE
+        mysnake.append([coord["x"],coord["y"]])
 
-return mysnake, grid
+    for snake in data["board"]['snakes']:
+        for coord in snake['body']:
+            grid[coord["x"]][coord["y"]] = SNAKE
+
+    for f in data["board"]['food']:
+        grid[f["x"]][f["y"]] = FOOD
+
+    return mysnake, grid
 
 
 @bottle.route('/')
@@ -94,11 +104,10 @@ def move():
 
     our_snake, grid = init(data)
 
-    our_snake = data["you"]["body"]
-    snake_head = [our_snake[0]["x"], our_snake[0]["y"]]
+    snake_head = our_snake[0]
 
     print(snake_head)
-    path = a_star(snake_head, food, grid, snek_coords)
+    #path = a_star(snake_head, food, grid, snek_coords)
     direction = directions[data["turn"] % 4]
 
     #direction = random.choice(directions)
