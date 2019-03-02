@@ -4,6 +4,7 @@ import random
 import bottle
 
 from api import ping_response, start_response, move_response, end_response
+from AStar import neighbours, a_star
 
 @bottle.route('/')
 def index():
@@ -56,8 +57,9 @@ def move():
     """
     print(json.dumps(data))
 
-    directions = ['up', 'down', 'left', 'right']
-    direction = random.choice(directions)
+    directions = ['up', 'left', 'down', 'right']
+    direction = directions[data["turn"]%4]
+    #direction = random.choice(directions)
 
     return move_response(direction)
 
