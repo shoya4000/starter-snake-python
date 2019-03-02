@@ -6,6 +6,34 @@ import bottle
 from api import ping_response, start_response, move_response, end_response
 from AStar import neighbours, a_star
 
+def init(data):
+#{  #"turn": 1,
+    #"game": {  #"id": "d6e8f7e3-f95d-4d43-88bc-18768eb2960c"},
+    #"board": { #"food": #[{"y": 6, "x": 8}, {"y": 2, "x": 9}, {"y": 1, "x": 5}, {"y": 7, "x": 1}, {"y": 7, "x": 6}, {"y": 3, "x": 4}, {"y": 6, "x": 10}, {"y": 10, "x": 4}, {"y": 12, "x": 2}, {"y": 13, "x": 8}],
+                #"width": 15,
+                #"snakes":  #[{"body": [{"y": 1, "x": 13}, {"y": 2, "x": 13}, {"y": 2, "x": 13}],
+                #"health": 99,
+                #"id": "f854cec3-fc10-465f-91c7-1f100d35e691",
+                #"name": "Test2"}],
+                #"height": 15},
+    #"you": {   #"body": [{"y": -1, "x": 11}, {"y": 0, "x": 11}, {"y": 0, "x": 11}],
+                #"health": 99,
+                #"id": "7ecaaa6f-9c4a-4c90-9b44-fdd8423cf203",
+                #"name": "Test1"}}
+
+    grid = [[0 for col in xrange(data['game']["height"])] for row in xrange(data['width'])]
+    for snek in data['snakes']:
+        if snek['id']== data['you']:
+            mysnake = snek
+        for coord in snek['coords']:
+            grid[coord[0]][coord[1]] = SNAKE
+
+    for f in data['food']:
+        grid[f[0]][f[1]] = FOOD
+
+return mysnake, grid
+
+
 @bottle.route('/')
 def index():
     return '''
@@ -58,7 +86,17 @@ def move():
     print(json.dumps(data))
 
     directions = ['up', 'left', 'down', 'right']
+
+    our_snake, grid = init(data)
+
+
+    our_snake = data["you"]["body"]
+    snake_head = [our_snake[0]["x"], our_snake[0]["y"]]
+
+    print(snake_head)
+    path = a_star(snake_head, food, grid, snek_coords)
     direction = directions[data["turn"]%4]
+
     #direction = random.choice(directions)
 
     return move_response(direction)
